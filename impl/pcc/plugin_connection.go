@@ -28,17 +28,18 @@ import (
 	"github.com/gemfire/cloudcache-management-cf-plugin/impl"
 )
 
-type pluginConnection struct {
+// PluginConnection implements the ConnectionProvider interface
+type PluginConnection struct {
 	cliConnection plugin.CliConnection
 }
 
 // NewPluginConnectionProvider provides a constructor for the PCC implementation of ConnectionProvider
 func NewPluginConnectionProvider(connection plugin.CliConnection) (impl.ConnectionProvider, error) {
-	return &pluginConnection{cliConnection: connection}, nil
+	return &PluginConnection{cliConnection: connection}, nil
 }
 
 // GetConnectionData provides the connection data from a PCC cluster using the CF CLI
-func (pc *pluginConnection) GetConnectionData(commandData *domain.CommandData) error {
+func (pc *PluginConnection) GetConnectionData(commandData *domain.CommandData) error {
 	commandData.ConnnectionData = domain.ConnectionData{}
 	serviceKey, err := pc.getServiceKey(commandData.Target)
 	if err != nil {
@@ -49,7 +50,7 @@ func (pc *pluginConnection) GetConnectionData(commandData *domain.CommandData) e
 
 }
 
-func (pc *pluginConnection) getServiceKey(target string) (serviceKey string, err error) {
+func (pc *PluginConnection) getServiceKey(target string) (serviceKey string, err error) {
 	results, err := pc.cliConnection.CliCommandWithoutTerminalOutput("service-keys", target)
 	if err != nil {
 		return "", err
@@ -75,7 +76,7 @@ func (pc *pluginConnection) getServiceKey(target string) (serviceKey string, err
 	return
 }
 
-func (pc *pluginConnection) getServiceKeyDetails(commandData *domain.CommandData, serviceKey string) (err error) {
+func (pc *PluginConnection) getServiceKeyDetails(commandData *domain.CommandData, serviceKey string) (err error) {
 	keyInfo, err := pc.cliConnection.CliCommandWithoutTerminalOutput("service-key", commandData.Target, serviceKey)
 	if err != nil {
 		return err

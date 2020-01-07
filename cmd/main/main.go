@@ -43,7 +43,7 @@ func main() {
 		}
 		plugin.Start(&basicPlugin)
 	} else {
-		geodeCommand, err := geode.NewGeodeCommand(commonCode)
+		geodeCommand, err := geode.NewGeodeCommand(commonCode, geode.Connection{})
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(1)
